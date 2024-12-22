@@ -29,7 +29,7 @@ const About = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
       {/* Left Side: About Section */}
       <div className="flex-1 bg-gray-100 p-8 md:p-16">
         <h2 className="text-3xl font-semibold">About Us</h2>
@@ -40,12 +40,16 @@ const About = () => {
       <div className="flex-1 flex items-center justify-center bg-white p-8 md:p-16">
         <div className="w-full max-w-md">
           <h2 className="text-2xl font-semibold mb-7 text-center">{isLogin ? 'Log In' : 'Sign Up'}</h2>
-          <form onSubmit={handleAuth}>
+          <form onSubmit={handleAuth} className="space-y-6">
             {/* Email Input Field */}
-            <div className="relative mb-6">
+            <div className="mb-6">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
               <input
+                id="email"
                 type="email"
-                placeholder="Email"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => setEmailFocused(true)}
@@ -53,17 +57,21 @@ const About = () => {
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {emailFocused && !email && (
-                <span className="text-red-500 text-sm absolute left-0 bottom-[-22px]">
+                <div className="mt-2 text-red-500 text-sm">
                   You need to enter your email
-                </span>
+                </div>
               )}
             </div>
 
             {/* Password Input Field */}
-            <div className="relative mb-6">
+            <div className="mb-6">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
               <input
+                id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setPasswordFocused(true)}
@@ -71,10 +79,31 @@ const About = () => {
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {passwordFocused && !password && (
-                <span className="text-red-500 text-sm absolute left-0 bottom-[-22px]">
+                <div className="mt-2 text-red-500 text-sm">
                   You need to enter your password
-                </span>
+                </div>
               )}
+            </div>
+
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
+                  Remember me
+                </label>
+              </div>
+              <button
+                type="button"
+                className="text-sm text-blue-500 hover:underline"
+                onClick={() => alert('Forgot Password clicked!')} // Replace with actual forgot password logic
+              >
+                Forgot Password?
+              </button>
             </div>
 
             {/* Submit Button */}
@@ -85,7 +114,7 @@ const About = () => {
               {isLogin ? 'Log In' : 'Sign Up'}
             </button>
           </form>
-          
+
           {/* Switch between Login and Sign Up */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
