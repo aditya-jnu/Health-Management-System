@@ -31,7 +31,7 @@ const About = () => {
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
       {/* Left Side: About Section */}
-      <div className="flex-1 bg-gray-100 p-8 md:p-16">
+      <div className="flex-1 bg-blue-200 p-8 md:p-16">
         <h2 className="text-3xl font-semibold">About Us</h2>
         <p className="mt-4">Welcome to our Healthcare Portal. Log in to manage your health records easily.</p>
       </div>
@@ -99,7 +99,7 @@ const About = () => {
               </div>
               <button
                 type="button"
-                className="text-sm text-blue-500 hover:underline"
+                className="text-sm text-blue-600 hover:underline"
                 onClick={() => alert('Forgot Password clicked!')} // Replace with actual forgot password logic
               >
                 Forgot Password?
@@ -117,12 +117,12 @@ const About = () => {
 
           {/* Switch between Login and Sign Up */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-md text-black-600">
               {isLogin ? (
                 <>
                   Don't have an account?{' '}
                   <button
-                    className="text-blue-500 hover:underline"
+                    className="text-blue-600 hover:underline"
                     onClick={() => setIsLogin(false)}
                   >
                     Sign Up
