@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebaseConfig'; 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { supabase } from '../supabaseClient'; // Supabase client
 
 const About = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState(''); // Full name for signup
   const [isLogin, setIsLogin] = useState(true);
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
   const navigate = useNavigate();
 
   const handleAuth = async (e) => {
     e.preventDefault();
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        // Login Logic
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
         alert('Logged in successfully!');
-        navigate('/home'); // After login, redirect to Home page
+        navigate('/home'); // Redirect to Home page
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        // Signup Logic
+        const { data: user, error: signupError } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (signupError) throw signupError;
+
+        // Add user details to the Supabase "userDetails" table
+        const { error: insertError } = await supabase
+          .from('userDetails')
+          .insert({
+            id: user.user?.id,
+            fullName,
+            email,
+            profileComplete: false,
+          });
+        if (insertError) throw insertError;
+
         alert('Account created successfully!');
-        navigate('/home'); // After signup, redirect to Home page
+        navigate('/home');
       }
     } catch (error) {
       alert(error.message);
@@ -41,6 +61,26 @@ const About = () => {
         <div className="w-full max-w-md">
           <h2 className="text-2xl font-semibold mb-7 text-center">{isLogin ? 'Log In' : 'Sign Up'}</h2>
           <form onSubmit={handleAuth} className="space-y-6">
+            {!isLogin && (
+              <>
+                {/* Full Name Input Field */}
+                <div className="mb-6">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                    Full Name
+                  </label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+              </>
+            )}
+
             {/* Email Input Field */}
             <div className="mb-6">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -52,15 +92,9 @@ const About = () => {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setEmailFocused(true)}
-                onBlur={() => setEmailFocused(false)}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
-              {emailFocused && !email && (
-                <div className="mt-2 text-red-500 text-sm">
-                  You need to enter your email
-                </div>
-              )}
             </div>
 
             {/* Password Input Field */}
@@ -74,36 +108,9 @@ const About = () => {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setPasswordFocused(true)}
-                onBlur={() => setPasswordFocused(false)}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
-              {passwordFocused && !password && (
-                <div className="mt-2 text-red-500 text-sm">
-                  You need to enter your password
-                </div>
-              )}
-            </div>
-
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
-                  Remember me
-                </label>
-              </div>
-              <button
-                type="button"
-                className="text-sm text-blue-600 hover:underline"
-                onClick={() => alert('Forgot Password clicked!')} // Replace with actual forgot password logic
-              >
-                Forgot Password?
-              </button>
             </div>
 
             {/* Submit Button */}
