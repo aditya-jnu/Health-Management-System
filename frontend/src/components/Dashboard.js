@@ -1,11 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
+const uploadProfilePicture = async (file, userId) => {
+  const fileName = `${userId}-profile-${file.name}`;
+  const filePath = `profile-pictures/${fileName}`;
+
+  const { data, error } = await supabase.storage
+      .from('avatars') // 'avatars' is the name of the bucket; replace with your bucket name
+      .upload(filePath, file);
+
+  if (error) {
+      throw new Error('Error uploading profile picture: ' + error.message);
+  }
+
+  // Get the public URL for the uploaded file
+  const { publicURL, error: urlError } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+  if (urlError) {
+      throw new Error('Error getting public URL for the file: ' + urlError.message);
+  }
+
+  return publicURL;
+};
+
+const uploadReportFile = async (file, userId) => {
+  const fileName = `${userId}-report-${file.name}`;
+  const filePath = `report-files/${fileName}`;
+
+  const { data, error } = await supabase.storage
+      .from('reports')
+      .upload(filePath, file);
+
+  if (error) {
+      throw new Error('Error uploading report file: ' + error.message);
+  }
+
+  const { publicURL, error: urlError } = supabase.storage
+      .from('reports')
+      .getPublicUrl(filePath);
+
+  if (urlError) {
+      throw new Error('Error getting public URL for the file: ' + urlError.message);
+  }
+
+  return publicURL;
+};
+
+
 const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [patientDetails, setPatientDetails] = useState({
         name: '',
         age: '',
+        bloodGroup: '', // New blood group field
         medicalHistory: '',
         allergies: '',
         profilePicture: null
@@ -52,6 +101,7 @@ const Dashboard = () => {
             setPatientDetails(existingUser.patient_details || { 
                 name: '',
                 age: '', 
+                bloodGroup: '', // Default blood group
                 medicalHistory: '', 
                 allergies: '',
                 profilePicture: null
@@ -59,35 +109,6 @@ const Dashboard = () => {
             setReports(existingUser.reports || []);
         } catch (error) {
             console.error('Error fetching patient data:', error);
-        }
-    };
-    const uploadProfilePicture = async (file, userId) => {
-        if (!file) {
-            throw new Error('No profile picture selected');
-        }
-
-        try {
-            const filePath = `profiles/${userId}/${Date.now()}-${file.name}`;
-            
-            const { error: uploadError } = await supabase.storage
-                .from('HMS')
-                .upload(filePath, file, {
-                    cacheControl: '3600',
-                    upsert: true
-                });
-
-            if (uploadError) {
-                throw new Error(`Profile upload failed: ${uploadError.message}`);
-            }
-
-            const { data } = supabase.storage
-                .from('HMS')
-                .getPublicUrl(filePath);
-
-            return data.publicUrl;
-        } catch (error) {
-            console.error('Profile picture upload error:', error);
-            throw error;
         }
     };
 
@@ -136,54 +157,15 @@ const Dashboard = () => {
         setPatientDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files?.[0] || null;
-        setNewReport((prevReport) => ({ ...prevReport, file }));
-    };
-
-    const uploadReportFile = async (file, userId) => {
-        if (!file) {
-            throw new Error('No file selected');
-        }
-
-        try {
-            // Create unique file path
-            const filePath = `reports/${userId}/${Date.now()}-${file.name}`;
-            
-            // Upload file to Supabase storage
-            const { error: uploadError } = await supabase.storage
-                .from('HMS')
-                .upload(filePath, file, {
-                    cacheControl: '3600',
-                    upsert: false
-                });
-
-            if (uploadError) {
-                throw new Error(`Upload failed: ${uploadError.message}`);
-            }
-
-            // Get public URL after successful upload
-            const { data } = supabase.storage
-                .from('HMS')
-                .getPublicUrl(filePath);
-
-            return data.publicUrl;
-
-        } catch (error) {
-            console.error('File upload error:', error);
-            throw error;
-        }
-    };
-
     const handleSaveDetails = async (e) => {
         e.preventDefault();
-    
+
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session?.user) {
                 throw new Error('No authenticated user found');
             }
-    
+
             const userId = session.user.id;
             let fileUrl = '';
             if (newReport.file) {
@@ -194,7 +176,6 @@ const Dashboard = () => {
                     return;
                 }
             }
-    
 
             const newReports = newReport.title || newReport.description ? [
                 ...reports,
@@ -204,8 +185,8 @@ const Dashboard = () => {
                     date: new Date().toISOString(),
                     fileUrl,
                 }
-            ] : reports; 
-    
+            ] : reports;
+
             const { error: updateError } = await supabase
                 .from('patients')
                 .update({
@@ -213,19 +194,19 @@ const Dashboard = () => {
                     reports: newReports,
                 })
                 .eq('auth_id', userId);
-    
+
             if (updateError) throw updateError;
-    
-          
+
             setPatientDetails((prevDetails) => ({
                 ...prevDetails,
                 name: patientDetails.name,
                 age: patientDetails.age,
+                bloodGroup: patientDetails.bloodGroup, // Save blood group as well
                 medicalHistory: patientDetails.medicalHistory,
                 allergies: patientDetails.allergies,
             }));
-    
-            setReports(newReports); 
+
+            setReports(newReports);
             setNewReport({
                 title: '',
                 description: '',
@@ -233,16 +214,14 @@ const Dashboard = () => {
                 fileUrl: '',
                 date: '',
             });
-    
+
             alert('Details and report saved successfully!');
-            setIsEditing(false); 
+            setIsEditing(false);
         } catch (error) {
             console.error('Error saving details:', error);
             alert('Error saving details: ' + error.message);
         }
     };
-    
-    
 
     const handleDeleteReport = async (indexToDelete) => {
         try {
@@ -268,13 +247,13 @@ const Dashboard = () => {
     if (loading) return <div>Loading...</div>;
 
     return (
-        <div className="container mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-8">Patient Dashboard</h1>
+        <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg max-w-4xl">
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-700">Patient Dashboard</h1>
 
-      {/* Patient Details Section */}
-      <div className="mt-6 bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">Patient Details</h2>
-        <div className="flex items-center">
+            {/* Patient Details Section */}
+            <div className="mt-6 bg-gray-50 p-6 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">Patient Details</h2>
+                <div className="flex items-center">
                     {patientDetails.profilePicture ? (
                         <img src={patientDetails.profilePicture} alt="Profile" className="w-24 h-24 rounded-full mr-4" />
                     ) : (
@@ -283,192 +262,176 @@ const Dashboard = () => {
                     <input type="file" onChange={handleProfilePicChange} className="border rounded-md p-2" />
                 </div>
 
-        {isEditing ? (
-          <form onSubmit={handleSaveDetails} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={patientDetails.name || ''}
-                onChange={handlePatientDetailsChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
+                {isEditing ? (
+                    <form onSubmit={handleSaveDetails} className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={patientDetails.name || ''}
+                                onChange={handlePatientDetailsChange}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="age" className="block text-sm font-medium text-gray-700">Age</label>
+                            <input
+                                type="number"
+                                id="age"
+                                name="age"
+                                value={patientDetails.age || ''}
+                                onChange={handlePatientDetailsChange}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                                min="0"
+                                step="1"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700">Blood Group</label>
+                            <input
+                                type="text"
+                                id="bloodGroup"
+                                name="bloodGroup"
+                                value={patientDetails.bloodGroup || ''}
+                                onChange={handlePatientDetailsChange}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="medicalHistory" className="block text-sm font-medium text-gray-700">Medical History</label>
+                            <textarea
+                                id="medicalHistory"
+                                name="medicalHistory"
+                                value={patientDetails.medicalHistory || ''}
+                                onChange={handlePatientDetailsChange}
+                                className="w-full p-2 border border-gray-300 rounded-md h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="allergies" className="block text-sm font-medium text-gray-700">Allergies</label>
+                            <textarea
+                                id="allergies"
+                                name="allergies"
+                                value={patientDetails.allergies || ''}
+                                onChange={handlePatientDetailsChange}
+                                className="w-full p-2 border border-gray-300 rounded-md h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div className="flex space-x-4 pt-4">
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
+                            >
+                                Save Changes
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditing(false)}
+                                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition duration-200"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                ) : (
+                    <div className="space-y-3">
+                        <p className="border-b pb-2"><strong>Name:</strong> {patientDetails.name || 'N/A'}</p>
+                        <p className="border-b pb-2"><strong>Age:</strong> {patientDetails.age || 'N/A'}</p>
+                        <p className="border-b pb-2"><strong>Blood Group:</strong> {patientDetails.bloodGroup || 'N/A'}</p>
+                        <p className="border-b pb-2"><strong>Medical History:</strong> {patientDetails.medicalHistory || 'N/A'}</p>
+                        <p className="border-b pb-2"><strong>Allergies:</strong> {patientDetails.allergies || 'N/A'}</p>
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-200"
+                        >
+                            Edit Details
+                        </button>
+                    </div>
+                )}
             </div>
-            <div>
-              <label htmlFor="age" className="block text-sm font-medium text-gray-700">
-                Age
-              </label>
-              <input
-                type="number"
-                id="age"
-                name="age"
-                value={patientDetails.age || ''}
-                onChange={handlePatientDetailsChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="medicalHistory" className="block text-sm font-medium text-gray-700">
-                Medical History
-              </label>
-              <textarea
-                id="medicalHistory"
-                name="medicalHistory"
-                value={patientDetails.medicalHistory || ''}
-                onChange={handlePatientDetailsChange}
-                className="w-full p-2 border border-gray-300 rounded-md h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="allergies" className="block text-sm font-medium text-gray-700">
-                Allergies
-              </label>
-              <textarea
-                id="allergies"
-                name="allergies"
-                value={patientDetails.allergies || ''}
-                onChange={handlePatientDetailsChange}
-                className="w-full p-2 border border-gray-300 rounded-md h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div className="flex space-x-4 pt-4">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
-              >
-                Save Changes
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition duration-200"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div className="space-y-3">
-            <p className="border-b pb-2"><strong>Name:</strong> {patientDetails.name || 'N/A'}</p>
-            <p className="border-b pb-2"><strong>Age:</strong> {patientDetails.age || 'N/A'}</p>
-            <p className="border-b pb-2"><strong>Medical History:</strong> {patientDetails.medicalHistory || 'N/A'}</p>
-            <p className="border-b pb-2"><strong>Allergies:</strong> {patientDetails.allergies || 'N/A'}</p>
-            <button
-              onClick={() => setIsEditing(true)}
-              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-200"
-            >
-              Edit Details
-            </button>
-          </div>
-        )}
-      </div>
 
-      {/* Reports Section */}
-      <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Upload Report</h2>
-          <button
-            onClick={() => setShowUploadForm(!showUploadForm)}
-            className={`px-4 py-2 ${showUploadForm ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} 
-            text-white rounded-md transition duration-200`}
-          >
-            {showUploadForm ? 'Cancel' : 'Add Report'}
-          </button>
-        </div>
-
-        {showUploadForm && (
-          <form onSubmit={handleSaveDetails} className="mt-4 space-y-4 bg-white p-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Report Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={newReport.title || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={newReport.description || ''}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-300 rounded-md h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="file" className="block text-sm font-medium text-gray-700">Upload File</label>
-              <input
-                type="file"
-                id="file"
-                onChange={handleFileChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <button 
-              type="submit" 
-              className="w-full mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
-            >
-              Upload Report
-            </button>
-          </form>
-        )}
-
-        {reports.length > 0 ? (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">Uploaded Reports</h3>
-            <div className="space-y-4">
-              {reports.map((report, index) => (
-                <div key={index} className="bg-white p-4 rounded-md shadow-sm">
-                  <h4 className="font-bold text-lg mb-2">{report.title}</h4>
-                  <p className="text-gray-600 mb-3">{report.description}</p>
-                  {report.fileUrl && (
-                    <p className="mb-3">
-                      View Report:{' '}
-                      <a
-                        href={report.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-600"
-                      >
-                        Download
-                      </a>
-                    </p>
-                  )}
-                  <button
-                    onClick={() => handleDeleteReport(index)}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200"
-                  >
-                    Delete Report
-                  </button>
+            {/* Reports Section */}
+            <div className="mt-8 bg-gray-50 p-6 rounded-lg shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-semibold">Upload Report</h2>
+                    <button
+                        onClick={() => setShowUploadForm(!showUploadForm)}
+                        className={`px-4 py-2 ${showUploadForm ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md transition duration-200`}
+                    >
+                        {showUploadForm ? 'Cancel' : 'Upload New Report'}
+                    </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <p className="mt-4 text-gray-500 text-center">No reports uploaded yet.</p>
-        )}
-      </div>
 
-      {uploadStatus && (
-        <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-md">
-          {uploadStatus}
+                {showUploadForm && (
+                    <form onSubmit={handleSaveDetails} className="space-y-4">
+                        <div>
+                            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                value={newReport.title || ''}
+                                onChange={handleInputChange}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                value={newReport.description || ''}
+                                onChange={handleInputChange}
+                                className="w-full p-2 border border-gray-300 rounded-md h-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="file" className="block text-sm font-medium text-gray-700">File</label>
+                            <input
+                                type="file"
+                                id="file"
+                                name="file"
+                                onChange={(e) => setNewReport({ ...newReport, file: e.target.files[0] })}
+                                className="w-full p-2 border border-gray-300 rounded-md"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
+                        >
+                            Save Report
+                        </button>
+                    </form>
+                )}
+
+                {/* Reports List */}
+                <div className="mt-6 space-y-4">
+                    {reports.map((report, index) => (
+                        <div key={index} className="p-4 border border-gray-200 rounded-lg shadow-sm">
+                            <h3 className="font-semibold">{report.title}</h3>
+                            <p>{report.description}</p>
+                            {report.fileUrl && (
+                                <a href={report.fileUrl} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">Download File</a>
+                            )}
+                            <button
+                                onClick={() => handleDeleteReport(index)}
+                                className="mt-2 text-red-500 hover:text-red-700"
+                            >
+                                Delete Report
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
-      )}
-    </div>
     );
 };
 
