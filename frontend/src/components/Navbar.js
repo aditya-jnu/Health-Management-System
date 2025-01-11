@@ -46,7 +46,7 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className="bg-white shadow-md px-4 py-2 flex justify-between items-center relative z-50">
+    <nav className="sticky top-0 bg-gray-700 bg-opacity-90 px-4 py-2 flex justify-between items-center shadow-md z-50">
       {/* Logo */}
       <div className="flex items-center">
         <Link to="/" className="flex items-center">
@@ -55,74 +55,70 @@ const Navbar = () => {
             alt="Logo"
             className="h-10 w-10 rounded-full mr-2"
           />
-          <span className="text-xl font-bold text-blue-700">HealthApp</span>
+          <span className="text-2xl font-bold italic text-violet-950">HealthApp</span>
         </Link>
       </div>
 
       {/* Menu for larger screens */}
       <div className="hidden lg:flex items-center space-x-8">
-        {["/", "/xyz", "/xyz", "/xyz", "/xyz", "/contact"].map(
-          (path, idx) => (
-            <NavLink
-              key={idx}
-              to={path}
-              className={({ isActive }) =>
-                `text-gray-700 hover:text-blue-600 duration-200 ${
-                  isActive ? "text-blue-600 font-bold" : ""
-                }`
-              }
-            >
-              {path === "/"
-                ? "Home"
-                : path.slice(1).replace(/\b\w/g, (l) => l.toUpperCase())}
-            </NavLink>
-          )
-        )}
+        {["/", "/xyz", "/xyz", "/xyz", "/xyz", "/contact"].map((path, idx) => (
+          <NavLink
+            key={idx}
+            to={path}
+            className={({ isActive }) =>
+              `text-gray-300 hover:text-white duration-200 ${
+                isActive ? "text-white font-bold" : ""
+              }`
+            }
+          >
+            {path === "/"
+              ? "Home"
+              : path.slice(1).replace(/\b\w/g, (l) => l.toUpperCase())}
+          </NavLink>
+        ))}
       </div>
 
       {/* Burger Menu Button for smaller screens */}
       <div className="lg:hidden flex items-center">
-        <button onClick={toggleMenu} className="text-gray-700 text-2xl">
+        <button onClick={toggleMenu} className="text-gray-300 text-2xl">
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
 
       {/* Combined Dropdown Menu for smaller screens */}
       {(menuOpen || dropdownOpen) && (
-        <div className="absolute top-14 left-0 w-full bg-white shadow-md lg:hidden">
+        <div className="absolute top-14 left-0 w-full bg-gray-700 bg-opacity-90 shadow-md lg:hidden">
           <ul className="flex flex-col items-center py-4">
-            {["/", "/xyz", "/xyz", "/xyz", "/xyz", "/contact"].map(
-              (path, idx) => (
-                <li key={idx} className="w-full text-center py-2">
-                  <NavLink
-                    to={path}
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setDropdownOpen(false);
-                    }}
-                    className={({ isActive }) =>
-                      `block text-gray-700 hover:text-blue-600 duration-200 ${
-                        isActive ? "text-blue-600 font-bold" : ""
-                      }`
-                    }
-                  >
-                    {path === "/"
-                      ? "Home"
-                      : path.slice(1).replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </NavLink>
-                </li>
-              )
-            )}
+            {["/", "/xyz", "/xyz", "/xyz", "/xyz", "/contact"].map((path, idx) => (
+              <li key={idx} className="w-full text-center py-2">
+                <NavLink
+                  to={path}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setDropdownOpen(false);
+                  }}
+                  className={({ isActive }) =>
+                    `block text-gray-300 hover:text-white duration-200 ${
+                      isActive ? "text-white font-bold" : ""
+                    }`
+                  }
+                >
+                  {path === "/"
+                    ? "Home"
+                    : path.slice(1).replace(/\b\w/g, (l) => l.toUpperCase())}
+                </NavLink>
+              </li>
+            ))}
             {user && (
               <>
                 <li
-                  className="w-full text-center py-2 cursor-pointer text-gray-700 hover:text-blue-600"
+                  className="w-full text-center py-2 cursor-pointer text-gray-300 hover:text-white"
                   onClick={handleDashboard}
                 >
                   Dashboard
                 </li>
                 <li
-                  className="w-full text-center py-2 cursor-pointer text-gray-700 hover:text-blue-600"
+                  className="w-full text-center py-2 cursor-pointer text-gray-300 hover:text-white"
                   onClick={handleLogout}
                 >
                   Logout
@@ -140,15 +136,13 @@ const Navbar = () => {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
-            <span className="text-gray-700 hidden lg:block">
-              {user.email}
-            </span>
+            <span className="text-gray-300 hidden lg:block">{user.email}</span>
             <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center">
               {user.email[0].toUpperCase()}
             </div>
           </div>
         ) : (
-          <span className="text-gray-500">Loading...</span>
+          <span className="text-gray-400">Loading...</span>
         )}
 
         {/* Dropdown Menu */}

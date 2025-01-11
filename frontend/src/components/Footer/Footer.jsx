@@ -10,12 +10,12 @@ export default function Footer() {
                     <div className='flex items-center'>
                     <Link to="/" className="flex items-center">
                         <img
-                            src=""
+                            src="./assets/logohealth.jpg"
                             className="mr-3 h-12 rounded-full"
                             alt="Logo"
                         />
                     </Link>
-                    <span className='text-violet-950 text-2xl font-bold italic'>Health</span>
+                    <span className='text-violet-950 text-2xl font-bold italic'>HealthApp</span>
                     </div>
                     </div>
                     <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
@@ -72,8 +72,7 @@ export default function Footer() {
                 <div className="sm:flex sm:items-center sm:justify-between">
                     <span className="text-sm text-gray-500 sm:text-center">
                         © 2024
-                        {/* <a href="https://hiteshchoudhary.com/" className="hover:underline"> */}
-                         Health
+                         HealthApp
                         {/* </a> */}
                         . All Rights Reserved.
                     </span>
