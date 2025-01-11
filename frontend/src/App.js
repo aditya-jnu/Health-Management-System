@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import Geolocation from './components/GeoLocation';
+import GetHospital from './components/GetHospital';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<About />} />
         <Route path="/home" element={<Home />} />
          <Route path="/dashboard" element={<Dashboard />} />
+         <Route path="/getHospital" element={<GetHospital />} />
       </Routes>
     </Router>
   );
