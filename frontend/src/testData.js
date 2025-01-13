@@ -1,6 +1,9 @@
 const hospitals = [
   {
     name: "Max Multi Speciality Centre, Panchsheel Park",
+    vicinity: "Panchsheel Park, New Delhi",
+    rating: 4.5,
+    user_ratings_total: 120,
     departments: [
       {
         name: "Dermatology",
@@ -15,10 +18,26 @@ const hospitals = [
           },
         ],
       },
+      {
+        name: "Neurosuregeon",
+        doctors: [
+          {
+            name: "Dr. Satyam Laheri",
+            available: true,
+            availability: {
+              offline: ["10:00 AM - 11:00 AM", "4:00 PM - 5:00 PM"],
+              online: ["11:30 AM - 12:00 PM", "5:30 PM - 6:00 PM"],
+            },
+          },
+        ],
+      },
     ],
   },
   {
     name: "Fortis Flt Lt Rajan Dhall Hospital, Vasant Kunj, New Delhi",
+    vicinity: "Vasant Kunj, New Delhi",
+    rating: 4.2,
+    user_ratings_total: 200,
     departments: [
       {
         name: "Cardiology",
@@ -37,6 +56,9 @@ const hospitals = [
   },
   {
     name: "Sukhmani Hospital | Best Hospital in South Delhi | Multispeciality Hospital in Delhi",
+    vicinity: "South Delhi",
+    rating: 4.0,
+    user_ratings_total: 150,
     departments: [
       {
         name: "Neurology",
