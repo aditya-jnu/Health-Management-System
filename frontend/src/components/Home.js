@@ -1,11 +1,93 @@
-import Navbar from "./Navbar";
+import React from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 const Home = () => {
-    return (
-      <div className="min-h-screen bg-gray-100">
-        <div></div>        
-      </div>
-    );
+  const sliderData = [
+    {
+      title: "Box 1",
+      description: "This is the first box",
+      image: "/assets/box1.jpg",
+    },
+    {
+      title: "Box 2",
+      description: "This is the second box",
+      image: "/assets/box2.jpg",
+    },
+    {
+      title: "Box 3",
+      description: "This is the third box",
+      image: "/assets/box3.jpg",
+    },
+    {
+      title: "Box 4",
+      description: "This is the fourth box",
+      image: "/assets/box4.jpg",
+    },
+    {
+      title: "Box 5",
+      description: "This is the fifth box",
+      image: "/assets/box5.jpg",
+    },
+  ];
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000, // Change slide every 2 seconds
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
-  
-  export default Home;
-  
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <h1 className="text-center text-3xl font-bold py-8">Welcome to the Home Page</h1>
+      
+      {/* Other content of the Home page */}
+      <div className="mx-auto max-w-5xl">
+        {/* Add other sections or content you need above the slider here */}
+      </div>
+
+      {/* Slider Section at the bottom */}
+      <div className="mx-auto max-w-5xl pt-16">
+        <Slider {...settings}>
+          {sliderData.map((item, index) => (
+            <div
+              key={index}
+              className="p-10 bg-white shadow-md rounded-md flex flex-col items-center mx-0" // Added mx-2 for margin between items
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-40 object-cover rounded-t-md"
+              />
+              <h2 className="text-xl font-semibold mt-4">{item.title}</h2>
+              <p className="text-gray-600 text-center">{item.description}</p>
+            </div>
+          ))}
+        </Slider>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
