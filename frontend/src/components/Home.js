@@ -8,27 +8,27 @@ const Home = () => {
     {
       title: "Box 1",
       description: "This is the first box",
-      image: "/assets/box1.jpg",
+      image: "/assets/dr1.avif",
     },
     {
       title: "Box 2",
       description: "This is the second box",
-      image: "/assets/box2.jpg",
+      image: "/assets/dr2.avif",
     },
     {
       title: "Box 3",
       description: "This is the third box",
-      image: "/assets/box3.jpg",
+      image: "/assets/dr3.avif",
     },
     {
       title: "Box 4",
       description: "This is the fourth box",
-      image: "/assets/box4.jpg",
+      image: "/assets/dr4.jpg",
     },
     {
       title: "Box 5",
       description: "This is the fifth box",
-      image: "/assets/box5.jpg",
+      image: "/assets/dr5.jpg",
     },
   ];
 
@@ -60,12 +60,22 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <h1 className="text-center text-3xl font-bold py-8">Welcome to the Home Page</h1>
+      {/* Inline CSS to style react-slick */}
+      <style>
+        {`
+          .slider-container .slick-slide {
+            padding: 0 10px; /* Space between slides */
+          }
+          .slider-container .slick-list {
+            margin: 0 -10px; /* Align slides properly */
+          }
+        `}
+      </style>
 
       {/* Image Section with Text Overlay */}
-      <div className="relative w-full h-64">
+      <div className="relative w-full h-[30rem]">
         <img
-          src="/assets/hero-image.jpg"
+          src="/assets/medi1st.webp"
           alt="Hero"
           className="w-full h-full object-cover"
         />
@@ -81,11 +91,14 @@ const Home = () => {
 
       {/* Slider Section */}
       <div className="mx-auto max-w-5xl pt-16">
-        <Slider {...settings}>
+        <Slider
+          {...settings}
+          className="slider-container" // Custom class for styling
+        >
           {sliderData.map((item, index) => (
             <div
               key={index}
-              className="p-10 bg-white shadow-md rounded-md flex flex-col items-center mx-0"
+              className="p-6 bg-white shadow-md rounded-md flex flex-col items-center mb-16"
             >
               <img
                 src={item.image}
