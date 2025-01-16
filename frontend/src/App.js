@@ -4,7 +4,7 @@ import About from './components/About';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Geolocation from './components/GeoLocation';
-import GetHospital from './components/GetHospital';
+import Bookappointment from './components/Bookappointment';
 import Layout from './Layout';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
           {/* Default route */}
           <Route path="home" element={<Home />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="getHospital" element={<GetHospital />} />
+          <Route path="bookappointment" element={<Bookappointment/>} />
         </Route>
       </Routes>
     </Router>
