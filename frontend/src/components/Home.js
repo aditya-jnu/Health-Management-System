@@ -39,7 +39,7 @@ const Home = () => {
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2000, // Change slide every 2 seconds
+    autoplaySpeed: 2000,
     responsive: [
       {
         breakpoint: 1024,
@@ -61,19 +61,31 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <h1 className="text-center text-3xl font-bold py-8">Welcome to the Home Page</h1>
-      
-      {/* Other content of the Home page */}
-      <div className="mx-auto max-w-5xl">
-        {/* Add other sections or content you need above the slider here */}
+
+      {/* Image Section with Text Overlay */}
+      <div className="relative w-full h-64">
+        <img
+          src="/assets/hero-image.jpg"
+          alt="Hero"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="text-center text-white px-6">
+            <h2 className="text-4xl font-bold mb-4">Welcome to Our Platform</h2>
+            <p className="text-lg">
+              Discover amazing content and features tailored just for you.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Slider Section at the bottom */}
+      {/* Slider Section */}
       <div className="mx-auto max-w-5xl pt-16">
         <Slider {...settings}>
           {sliderData.map((item, index) => (
             <div
               key={index}
-              className="p-10 bg-white shadow-md rounded-md flex flex-col items-center mx-0" // Added mx-2 for margin between items
+              className="p-10 bg-white shadow-md rounded-md flex flex-col items-center mx-0"
             >
               <img
                 src={item.image}
