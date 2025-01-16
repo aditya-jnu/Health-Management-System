@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Dashboard from './components/Dashboard';
 import Geolocation from './components/GeoLocation';
 import Bookappointment from './components/Bookappointment';
+import Myappointment from './components/Myappointment';
 import Layout from './Layout';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="home" element={<Home />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="bookappointment" element={<Bookappointment/>} />
+          <Route path="myappointment" element={<Myappointment />} />
         </Route>
       </Routes>
     </Router>

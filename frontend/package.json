@@ -6,6 +6,7 @@
     "@supabase/supabase-js": "^2.47.10",
     "axios": "^1.7.9",
     "browserify-zlib": "^0.2.0",
+    "clsx": "^2.1.1",
     "cra-template": "1.2.0",
     "firebase": "^11.1.0",
     "https-browserify": "^1.0.0",

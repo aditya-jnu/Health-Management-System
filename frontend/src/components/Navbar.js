@@ -61,7 +61,7 @@ const Navbar = () => {
 
       {/* Menu for larger screens */}
       <div className="hidden lg:flex items-center space-x-8">
-        {["/Home", "/Bookappointment", "/xyz", "/xyz", "/xyz", "/contact"].map((path, idx) => (
+        {["/Home", "/Bookappointment", "/Myappointment", "/xyz", "/xyz", "/contact"].map((path, idx) => (
           <NavLink
             key={idx}
             to={path}
