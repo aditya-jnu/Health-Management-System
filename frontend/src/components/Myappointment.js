@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Card from "./UI/Card";
-import EmailJS from "emailjs-com";
+import Modal from "./UI/Modal";
 
 const MyAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -68,27 +68,50 @@ const MyAppointment = () => {
   const handleSubmitForm = async (e) => {
     e.preventDefault();
 
+    const emailData = {
+      service_id: "service_bv3i6qp", // Replace with your actual service ID
+      template_id: "template_1f6thm8", // Replace with your actual template ID
+      user_id: "1Fyyfib7XghQqEtKM", // Replace with your actual user ID
+      template_params: {
+        to_email: currentDoctor.doctor_email,
+        patient_symptoms: formData.symptoms,
+        patient_medications: formData.medications,
+        patient_allergies: formData.allergies,
+        patient_medical_history: formData.medicalHistory,
+        patient_medicine_history: formData.medicineHistory,
+      },
+    };
+
     try {
-      await EmailJS.send(
-        "service_bv3i6qp",
-        "template_1f6thm8",
+      const response = await fetch(
+        "https://api.emailjs.com/api/v1.0/email/send",
         {
-          to_email: currentDoctor.doctor_email,
-          patient_symptoms: formData.symptoms,
-          patient_medications: formData.medications,
-          patient_allergies: formData.allergies,
-          patient_medical_history: formData.medicalHistory,
-          patient_medicine_history: formData.medicineHistory,
-        },
-        "1Fyyfib7XghQqEtKM"
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(emailData),
+        }
       );
 
-      alert("Pre-appointment details sent to the doctor successfully!");
-      setShowForm(false);
-      setFormData({ symptoms: "", medications: "", allergies: "", medicalHistory: "", medicineHistory: "" });
+      if (response.ok) {
+        alert("Pre-appointment details sent to the doctor successfully!");
+        setShowForm(false);
+        setFormData({
+          symptoms: "",
+          medications: "",
+          allergies: "",
+          medicalHistory: "",
+          medicineHistory: "",
+        });
+      } else {
+        const errorResponse = await response.json();
+        console.error("Error response:", errorResponse);
+        alert("Failed to send email. Please check your inputs and try again.");
+      }
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("Failed to send email. Please check your internet connection and try again.");
+      alert("An error occurred. Please try again.");
     }
   };
 
@@ -136,22 +159,28 @@ const MyAppointment = () => {
 
                 <div className="space-y-1 text-gray-600">
                   <p>
-                    <span className="font-medium">Doctor:</span> {appointment.doctor_name}
+                    <span className="font-medium">Doctor:</span>{" "}
+                    {appointment.doctor_name}
                   </p>
                   <p>
-                    <span className="font-medium">Department:</span> {appointment.department}
+                    <span className="font-medium">Department:</span>{" "}
+                    {appointment.department}
                   </p>
                   <p>
-                    <span className="font-medium">Type:</span> {appointment.appointment_type}
+                    <span className="font-medium">Type:</span>{" "}
+                    {appointment.appointment_type}
                   </p>
                   <p>
-                    <span className="font-medium">Time:</span> {appointment.time_slot}
+                    <span className="font-medium">Time:</span>{" "}
+                    {appointment.time_slot}
                   </p>
                   <p>
-                    <span className="font-medium">Location:</span> {appointment.hospital_location}
+                    <span className="font-medium">Location:</span>{" "}
+                    {appointment.hospital_location}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Booked on: {new Date(appointment.created_at).toLocaleDateString()}
+                    Booked on:{" "}
+                    {new Date(appointment.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <button
@@ -167,78 +196,12 @@ const MyAppointment = () => {
       )}
 
       {showForm && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-96 shadow-lg relative">
-            <h2 className="text-lg font-bold mb-4 text-center">Pre-Appointment Check</h2>
-            <form onSubmit={handleSubmitForm} className="space-y-4">
-              <div>
-                <label className="block font-medium">Symptoms</label>
-                <textarea
-                  name="symptoms"
-                  value={formData.symptoms}
-                  onChange={handleFormChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                ></textarea>
-              </div>
-              <div>
-                <label className="block font-medium">Medications</label>
-                <textarea
-                  name="medications"
-                  value={formData.medications}
-                  onChange={handleFormChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                ></textarea>
-              </div>
-              <div>
-                <label className="block font-medium">Allergies</label>
-                <textarea
-                  name="allergies"
-                  value={formData.allergies}
-                  onChange={handleFormChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                ></textarea>
-              </div>
-              <div>
-                <label className="block font-medium">Medical History</label>
-                <textarea
-                  name="medicalHistory"
-                  value={formData.medicalHistory}
-                  onChange={handleFormChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                ></textarea>
-              </div>
-              <div>
-                <label className="block font-medium">Medicine History</label>
-                <textarea
-                  name="medicineHistory"
-                  value={formData.medicineHistory}
-                  onChange={handleFormChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  required
-                ></textarea>
-              </div>
-              <div className="flex justify-between mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <Modal
+          setShowForm={setShowForm}
+          formData={formData}
+          handleFormChange={handleFormChange}
+          handleSubmitForm={handleSubmitForm}
+        />
       )}
     </div>
   );
