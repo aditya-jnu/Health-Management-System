@@ -11,6 +11,7 @@ const hospitals = [
           {
             name: "Dr. Aditi Sharma",
             available: true,
+            gmail:"29adityamishra@gmail.com",
             availability: {
               offline: ["10:00 AM - 11:00 AM", "4:00 PM - 5:00 PM"],
               online: ["11:30 AM - 12:00 PM", "5:30 PM - 6:00 PM"],
@@ -23,6 +24,7 @@ const hospitals = [
         doctors: [
           {
             name: "Dr. Satyam Laheri",
+            gmail:"satyamlaheri3@gmail.com",
             available: true,
             availability: {
               offline: ["10:00 AM - 11:00 AM", "4:00 PM - 5:00 PM"],
@@ -44,6 +46,7 @@ const hospitals = [
         doctors: [
           {
             name: "Dr. Sameer Verma",
+            gmail:"satyamlaheri3@gmail.com",
             available: true,
             availability: {
               offline: ["2:00 PM - 3:00 PM", "6:00 PM - 7:00 PM"],
@@ -65,6 +68,7 @@ const hospitals = [
         doctors: [
           {
             name: "Dr. Kavita Menon",
+            gmail:"kartik59_soe@jnu.ac.in",
             available: true,
             availability: {
               offline: ["9:00 AM - 10:00 AM", "1:00 PM - 2:00 PM"],

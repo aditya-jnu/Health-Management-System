@@ -98,7 +98,7 @@ const Home = () => {
           {sliderData.map((item, index) => (
             <div
               key={index}
-              className="p-6 bg-white shadow-md rounded-md flex flex-col items-center mb-16"
+              className="p-6 bg-blue-50 shadow-md rounded-md flex flex-col items-center mb-16 hover:bg-blue-200 transition duration-300"
             >
               <img
                 src={item.image}

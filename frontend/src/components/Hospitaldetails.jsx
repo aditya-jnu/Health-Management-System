@@ -86,6 +86,7 @@ const HospitalDetails = ({ selectedHospital }) => {
         hospital_location: selectedHospital.vicinity,
         department: selectedDepartment.name,
         doctor_name: selectedDoctor.name,
+        doctor_email: selectedDoctor.gmail,
         appointment_type: appointmentType,
         time_slot: selectedTimeSlot,
         created_at: new Date().toISOString(),
