@@ -52,7 +52,7 @@ const Navbar = () => {
         <div className="flex items-center ">
         <Link to="/" className="flex items-center">
           <img
-            src="/assets/logohealth.jpg"
+            src="/assets/QuickCare.png"
             alt="Logo"
             className="h-10 w-10 rounded-full mr-2"
           />
