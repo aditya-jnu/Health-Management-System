@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
     return (
-        <footer className="bg-black border-y">
+        <footer className="bg-primary-blue border-y font-montserrat">
             <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
                 <div className="md:flex md:justify-between">
                     <div className="mb-6 md:mb-0">
@@ -15,51 +15,56 @@ export default function Footer() {
                             alt="Logo"
                         />
                     </Link>
-                    <span className='text-violet-950 text-2xl font-bold italic'>HealthApp</span>
+                    <span className='text-white text-4xl font-montserrat'>QuickCare</span>
                     </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-8 sm:gap-10 sm:grid-cols-3">
                         <div>
-                            <h2 className="mb-6 text-sm font-semibold text-white uppercase">Resources</h2>
+                            <h2 className="mb-3 font-semibold text-white text-xl">For Information</h2>
                             <ul className="text-gray-500 font-medium">
-                                <li className="mb-4">
+                                <li className="mb-2">
                                     <Link to="/" className="hover:underline">
-                                        Home
+                                        About us
                                     </Link>
                                 </li>
-                                <li>
+                                <li className='mb-2'>
+                                    <Link to="" className="hover:underline">
+                                        Booking Guide
+                                    </Link>
+                                </li>
+                                <li className='mb-2'>
                                     <Link to="/about" className="hover:underline">
-                                        About
+                                        FAQ
                                     </Link>
                                 </li>
                                 
                             </ul>
                         </div>
                         <div>
-                            <h2 className="mb-6 text-sm font-semibold text-white uppercase">Follow us</h2>
+                            <h2 className="mb-3 text-xl font-semibold text-white">Helpful Links</h2>
                             <ul className="text-gray-500 font-medium">
-                                <li className='mb-4'>
+                                <li className='mb-2'>
                                     <Link to="/whyjoin" className="hover:underline">
-                                        Xyz
+                                        Book Appointment
                                     </Link>
                                 </li>
                                 
-                                <li>
+                                <li className='mb-2'>
                                     <Link to="/training" className="hover:underline">
-                                        xyz
+                                        Search for hospitals
+                                    </Link>
+                                </li>
+                                <li className='mb-2'>
+                                    <Link to="/training" className="hover:underline">
+                                        Services
                                     </Link>
                                 </li>
                             </ul>
                         </div>
                         <div>
-                            <h2 className="mb-6 text-sm font-semibold text-white uppercase">Legal</h2>
+                            <h2 className="mb-3 text-xl font-semibold text-white">Contact Us</h2>
                             <ul className="text-gray-500 font-medium">
-                                <li className="mb-4">
-                                    <Link to="/schedule" className="hover:underline">
-                                        xyz
-                                    </Link>
-                                </li>
-                                <li>
+                                <li className='mb-2'>
                                     <Link to="/contact" className="hover:underline">
                                         Contact
                                     </Link>
@@ -72,7 +77,7 @@ export default function Footer() {
                 <div className="sm:flex sm:items-center sm:justify-between">
                     <span className="text-sm text-gray-500 sm:text-center">
                         © 2025
-                         HealthApp
+                         QuickCare
                         {/* </a> */}
                         . All Rights Reserved.
                     </span>
