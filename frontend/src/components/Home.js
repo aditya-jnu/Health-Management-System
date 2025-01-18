@@ -2,33 +2,28 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const sliderData = [
     {
       title: "Box 1",
       description: "This is the first box",
-      image: "/assets/dr1.avif",
+      image: "/assets/1.png",
+      link: "/getHealthRecommendation"
     },
     {
       title: "Box 2",
       description: "This is the second box",
-      image: "/assets/dr2.avif",
+      image: "/assets/2.png",
+      link:"/medicalDiagnosis"
     },
     {
       title: "Box 3",
       description: "This is the third box",
-      image: "/assets/dr3.avif",
-    },
-    {
-      title: "Box 4",
-      description: "This is the fourth box",
-      image: "/assets/dr4.jpg",
-    },
-    {
-      title: "Box 5",
-      description: "This is the fifth box",
-      image: "/assets/dr5.jpg",
+      image: "/assets/3.png",
+      link:"/Myappointment"
     },
   ];
 
@@ -80,11 +75,12 @@ const Home = () => {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="text-center text-white px-6">
-            <h2 className="text-4xl font-bold mb-4">Welcome to Our Platform</h2>
-            <p className="text-lg">
-              Discover amazing content and features tailored just for you.
+          <div className="text-center text-white px-6 mr-60">
+            <h2 className="text-4xl font-bold mb-4">Book your first appointment</h2>
+            <p className="text-lg ">
+              Find the best doctors, clinics and hospitals in the city nearest to you.
             </p>
+            <button className="bg-logocolor rounded-lg p-4 mt-10 font-semibold" onClick={() => navigate("/Bookappointment")}>Book Appointment</button>
           </div>
         </div>
       </div>
@@ -98,15 +94,14 @@ const Home = () => {
           {sliderData.map((item, index) => (
             <div
               key={index}
-              className="p-6 bg-blue-50 shadow-md rounded-md flex flex-col items-center mb-16 hover:bg-blue-200 transition duration-300"
+              className="p-3 bg-blue-50 shadow-md rounded-md flex flex-col items-center mb-16 hover:bg-blue-200 transition duration-300 cursor-pointer"
+              onClick={() => navigate(item.link)}
             >
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-40 object-cover rounded-t-md"
+                className="w-full h-100 object-cover rounded-t-md"
               />
-              <h2 className="text-xl font-semibold mt-4">{item.title}</h2>
-              <p className="text-gray-600 text-center">{item.description}</p>
             </div>
           ))}
         </Slider>
