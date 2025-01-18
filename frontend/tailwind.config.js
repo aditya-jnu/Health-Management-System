@@ -8,12 +8,14 @@ module.exports = {
       fontFamily: {
         montserrat: ["Montserrat"],
         lato: ["Lato"],
+        poppins: ["Poppins"],
         garamond: ["Garamond"],
       },
       colors: {
         "primary-blue": "#1B374C",
         "secondary-blue": "#0C5C97",
         "navbg": "#E4E4E7",
+        "logocolor": "#32acff",
         "primary-gray": "#7B827E",
         "secondary-white": "#E8EBED",
         "white-text-secondary": "#B8C1C8",

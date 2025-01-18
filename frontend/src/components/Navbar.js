@@ -46,28 +46,28 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className="sticky top-0 bg-gray-700 bg-opacity-90 px-4 py-2 flex justify-between items-center shadow-md z-50">
+    <nav className="sticky top-0 bg-white bg-opacity-90 px-8 py-3 flex justify-between items-center shadow-md z-50">
       {/* Logo */}
-      <div className="flex items-center">
+      <div className="flex space-x-8 ">
+        <div className="flex items-center ">
         <Link to="/" className="flex items-center">
           <img
             src="/assets/logohealth.jpg"
             alt="Logo"
             className="h-10 w-10 rounded-full mr-2"
           />
-          <span className="text-2xl font-bold italic text-violet-950">HealthApp</span>
+          <span className="text-4xl font-bold  font-montserrat text-logocolor">QuickCare</span>
         </Link>
-      </div>
-
+        </div>
       {/* Menu for larger screens */}
-      <div className="hidden lg:flex items-center space-x-8">
-        {["/Home", "/Bookappointment", "/Myappointment", "/xyz", "/xyz", "/contact"].map((path, idx) => (
+      <div className="hidden lg:flex items-center space-x-6">
+        {["/Home", "/Bookappointment", "/Myappointment", "/medicalDiagnosis", "/getHealthRecommendation", "/contact"].map((path, idx) => (
           <NavLink
             key={idx}
             to={path}
             className={({ isActive }) =>
-              `text-gray-300 hover:text-white duration-200 ${
-                isActive ? "text-white font-bold" : ""
+              `text-black font-lato items-center hover:text-logocolor font-medium text-lg duration-200 ${
+                isActive ? "text-black " : "text-black"
               }`
             }
           >
@@ -77,6 +77,9 @@ const Navbar = () => {
           </NavLink>
         ))}
       </div>
+      </div>
+
+
 
       {/* Burger Menu Button for smaller screens */}
       <div className="lg:hidden flex items-center">
@@ -136,7 +139,6 @@ const Navbar = () => {
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
-            <span className="text-gray-300 hidden lg:block">{user.email}</span>
             <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center">
               {user.email[0].toUpperCase()}
             </div>
