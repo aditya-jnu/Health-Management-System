@@ -39,9 +39,9 @@ export default function NearByHosp() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
       {/* Left Section: List of Hospitals */}
-      <div className="w-1/3 border-r border-gray-200 p-6 overflow-y-auto">
+      <div className="w-full md:w-1/3 border-r border-gray-200 p-4 md:p-6 overflow-y-auto">
         <button
           className="w-full px-6 py-3 mb-6 rounded-xl bg-blue-600 text-white font-semibold 
                              hover:bg-blue-700 transform transition-all duration-200 
@@ -161,8 +161,14 @@ export default function NearByHosp() {
         </div>
       </div>
 
-      {/* Right section becomes the new component */}
-      <HospitalDetails selectedHospital={selectedHospital} />
+      {/* Right Section: Hospital Details */}
+      <div
+        className={`w-full md:w-2/3 p-4 md:p-6 ${
+          selectedHospital ? "block" : "hidden"
+        }`}
+      >
+        <HospitalDetails selectedHospital={selectedHospital} />
+      </div>
     </div>
   );
 }
