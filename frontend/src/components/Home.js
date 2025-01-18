@@ -75,7 +75,7 @@ const Home = () => {
       {/* Image Section with Text Overlay */}
       <div className="relative w-full h-[30rem]">
         <img
-          src="/assets/medi1st.webp"
+          src="/assets/homeComp1.png"
           alt="Hero"
           className="w-full h-full object-cover"
         />
