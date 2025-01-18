@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 
 const HospitalDetails = ({ selectedHospital }) => {
-  //const REDIRECT_URI = 'http://localhost:5000/auth/google';
-  //const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
@@ -54,18 +52,6 @@ const HospitalDetails = ({ selectedHospital }) => {
     setSelectedTimeSlot(slot);
     setBookingStatus("");
   }
-
-//   const handleTimeSlotSelect = (slot, type) => {
-//     if (!isAuthenticated) {
-//       // Redirect to Google Sign-In
-//       window.location.href = REDIRECT_URI;
-//     } else {
-//       // Resume the booking flow
-//       setSelectedTimeSlot(slot);
-//       setAppointmentType(type);
-//       setBookingStatus("");
-//     }
-//   };
 
   const handleBookAppointment = async () => {
     if (!selectedDoctor || !selectedTimeSlot || !appointmentType) {

@@ -8,6 +8,7 @@ import Bookappointment from './components/Bookappointment';
 import Myappointment from './components/Myappointment';
 import Layout from './Layout';
 import Contact from './components/Contact/Contact';
+import Chat from './components/Chat';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="bookappointment" element={<Bookappointment/>} />
           <Route path="myappointment" element={<Myappointment />} />
           <Route path="contact" element={<Contact />} />
+          <Route path='room/:code' element={<Chat/>}/>
         </Route>
       </Routes>
     </Router>
