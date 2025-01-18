@@ -9,6 +9,7 @@ import Myappointment from './components/Myappointment';
 import Layout from './Layout';
 import Contact from './components/Contact/Contact';
 import Chat from './components/Chat';
+import HealthRecommend from './components/HealthRecommend';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="myappointment" element={<Myappointment />} />
           <Route path="contact" element={<Contact />} />
           <Route path='room/:code' element={<Chat/>}/>
+          <Route path='/getHealthRecommendation' element={<HealthRecommend/>}/>
         </Route>
       </Routes>
     </Router>
