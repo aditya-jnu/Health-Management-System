@@ -10,7 +10,7 @@ import Layout from './Layout';
 import Contact from './components/Contact/Contact';
 import Chat from './components/Chat';
 import HealthRecommend from './components/HealthRecommend';
-
+import MedicalDiagnosisForm from './components/MediacalDiagnosis';
 function App() {
   return (
     <Router>
@@ -27,6 +27,7 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path='room/:code' element={<Chat/>}/>
           <Route path='/getHealthRecommendation' element={<HealthRecommend/>}/>
+          <Route path='/medicalDiagnosis' element={<MedicalDiagnosisForm/>}/>
         </Route>
       </Routes>
     </Router>
