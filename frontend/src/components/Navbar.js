@@ -1,33 +1,29 @@
 import { useState, useEffect } from "react";
 import { useNavigate, NavLink, Link } from "react-router-dom";
+import { 
+  Heart,
+  Stethoscope, 
+  Calendar, 
+  ClipboardList,
+  Activity,
+  HeartPulse,
+  MessageCircle
+} from "lucide-react";
 import { supabase } from "../supabaseClient";
-import { FaBars, FaTimes } from "react-icons/fa";
-
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
     };
 
-    fetchUser();
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-    return () => {
-      if (authListener && typeof authListener === "function") {
-        authListener();
-      }
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleDashboard = () => {
@@ -43,129 +39,148 @@ const Navbar = () => {
     setMenuOpen(false);
   };
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const navItems = [
+    { path: "/Home", icon: Heart, label: "Home" },
+    { path: "/Bookappointment", icon: Calendar, label: "Book Appointment" },
+    { path: "/Myappointment", icon: ClipboardList, label: "My Appointments" },
+    { path: "/medicalDiagnosis", icon: Stethoscope, label: "Medical Diagnosis" },
+    { path: "/getHealthRecommendation", icon: HeartPulse, label: "Health Tips" },
+    { path: "/contact", icon: MessageCircle, label: "Contact" }
+  ];
 
   return (
-    <nav className="sticky top-0 bg-white bg-opacity-90 px-8 py-3 flex justify-between items-center shadow-md z-50">
-      {/* Logo */}
-      <div className="flex space-x-8 ">
-        <div className="flex items-center ">
-        <Link to="/" className="flex items-center">
-          <img
-            src="/assets/QuickCare.png"
-            alt="Logo"
-            className="h-10 w-10 rounded-full mr-2"
-          />
-          <span className="text-4xl font-bold  font-montserrat text-logocolor">QuickCare</span>
-        </Link>
-        </div>
-      {/* Menu for larger screens */}
-      <div className="hidden lg:flex items-center space-x-6">
-        {["/Home", "/Bookappointment", "/Myappointment", "/medicalDiagnosis", "/getHealthRecommendation", "/contact"].map((path, idx) => (
-          <NavLink
-            key={idx}
-            to={path}
-            className={({ isActive }) =>
-              `text-black font-lato items-center hover:text-logocolor font-medium text-lg duration-200 ${
-                isActive ? "text-black " : "text-black"
-              }`
-            }
-          >
-            {path === "/"
-              ? "Home"
-              : path.slice(1).replace(/\b\w/g, (l) => l.toUpperCase())}
-          </NavLink>
-        ))}
-      </div>
-      </div>
+    <nav className={`sticky top-0 transition-all duration-300 ${
+      isScrolled 
+        ? "bg-white shadow-lg py-2" 
+        : "bg-white/90 backdrop-blur-sm py-3"
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="flex items-center group">
+            <img
+              src="/assets/QuickCare.png"
+              alt="Logo"
+              className="h-10 w-10 rounded-full mr-2 transition-transform group-hover:scale-110"
+            />
+            <span className="text-3xl font-bold font-montserrat bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
+              QuickCare
+            </span>
+          </Link>
 
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-1">
+            {navItems.map(({ path, icon: Icon, label }) => (
+              <NavLink
+                key={path}
+                to={path}
+                className={({ isActive }) =>
+                  `flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                  }`
+                }
+              >
+                <Icon className="w-4 h-4 mr-1.5" />
+                {label}
+              </NavLink>
+            ))}
+          </div>
 
-
-      {/* Burger Menu Button for smaller screens */}
-      <div className="lg:hidden flex items-center">
-        <button onClick={toggleMenu} className="text-gray-300 text-2xl">
-          {menuOpen ? <FaTimes /> : <FaBars />}
-        </button>
-      </div>
-
-      {/* Combined Dropdown Menu for smaller screens */}
-      {(menuOpen || dropdownOpen) && (
-        <div className="absolute top-14 left-0 w-full bg-gray-700 bg-opacity-90 shadow-md lg:hidden">
-          <ul className="flex flex-col items-center py-4">
-            {["/", "/xyz", "/xyz", "/xyz", "/xyz", "/contact"].map((path, idx) => (
-              <li key={idx} className="w-full text-center py-2">
-                <NavLink
-                  to={path}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setDropdownOpen(false);
-                  }}
-                  className={({ isActive }) =>
-                    `block text-gray-300 hover:text-white duration-200 ${
-                      isActive ? "text-white font-bold" : ""
-                    }`
-                  }
+          {/* User Profile */}
+          <div className="hidden lg:block">
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                 >
-                  {path === "/"
-                    ? "Home"
-                    : path.slice(1).replace(/\b\w/g, (l) => l.toUpperCase())}
-                </NavLink>
-              </li>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center text-white font-medium">
+                    {user.email[0].toUpperCase()}
+                  </div>
+                  <Activity className="w-4 h-4 text-gray-600" />
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                    <button
+                      onClick={handleDashboard}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                    >
+                      <ClipboardList className="w-4 h-4 mr-2" />
+                      Dashboard
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="animate-pulse">
+                <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          >
+            <div className="w-6 h-6 flex flex-col justify-center items-center space-y-1.5">
+              <span className={`block w-6 h-0.5 bg-gray-600 transform transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+              <span className={`block w-6 h-0.5 bg-gray-600 transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}></span>
+              <span className={`block w-6 h-0.5 bg-gray-600 transform transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+            </div>
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`lg:hidden transition-all duration-300 overflow-hidden ${menuOpen ? 'max-h-96' : 'max-h-0'}`}>
+          <div className="pt-2 pb-3 space-y-1">
+            {navItems.map(({ path, icon: Icon, label }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                  }`
+                }
+              >
+                <Icon className="w-4 h-4 mr-1.5" />
+                {label}
+              </NavLink>
             ))}
             {user && (
               <>
-                <li
-                  className="w-full text-center py-2 cursor-pointer text-gray-300 hover:text-white"
+                <button
                   onClick={handleDashboard}
+                  className="w-full flex items-center px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg"
                 >
+                  <ClipboardList className="w-4 h-4 mr-1.5" />
                   Dashboard
-                </li>
-                <li
-                  className="w-full text-center py-2 cursor-pointer text-gray-300 hover:text-white"
+                </button>
+                <button
                   onClick={handleLogout}
+                  className="w-full flex items-center px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg"
                 >
+                  <Heart className="w-4 h-4 mr-1.5" />
                   Logout
-                </li>
+                </button>
               </>
             )}
-          </ul>
+          </div>
         </div>
-      )}
-
-      {/* User Profile with Dropdown */}
-      <div className="relative hidden lg:flex">
-        {user ? (
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          >
-            <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center">
-              {user.email[0].toUpperCase()}
-            </div>
-          </div>
-        ) : (
-          <span className="text-gray-400">Loading...</span>
-        )}
-
-        {/* Dropdown Menu */}
-        {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-            <ul className="text-gray-700">
-              <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={handleDashboard}
-              >
-                Dashboard
-              </li>
-              <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={handleLogout}
-              >
-                Logout
-              </li>
-            </ul>
-          </div>
-        )}
       </div>
     </nav>
   );

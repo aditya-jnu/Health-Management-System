@@ -4,6 +4,7 @@ import { supabase } from "../supabaseClient";
 const HospitalDetails = ({ selectedHospital }) => {
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [appointmentType, setAppointmentType] = useState(null);
   const [bookingStatus, setBookingStatus] = useState("");
@@ -25,6 +26,7 @@ const HospitalDetails = ({ selectedHospital }) => {
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
     setSelectedDoctor(null);
+    setSelectedDate(null);
     setSelectedTimeSlot(null);
     setAppointmentType(null);
     setBookingStatus("");
@@ -32,6 +34,14 @@ const HospitalDetails = ({ selectedHospital }) => {
 
   const handleDoctorSelect = (doctor) => {
     setSelectedDoctor(doctor);
+    setSelectedDate(null);
+    setSelectedTimeSlot(null);
+    setAppointmentType(null);
+    setBookingStatus("");
+  };
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
     setSelectedTimeSlot(null);
     setAppointmentType(null);
     setBookingStatus("");
@@ -44,8 +54,8 @@ const HospitalDetails = ({ selectedHospital }) => {
   };
 
   const handleBookAppointment = async () => {
-    if (!selectedDoctor || !selectedTimeSlot || !appointmentType) {
-      setBookingStatus("Please select a doctor, appointment type, and time slot.");
+    if (!selectedDoctor || !selectedDate || !selectedTimeSlot || !appointmentType) {
+      setBookingStatus("Please select a doctor, date, appointment type, and time slot.");
       return;
     }
 
@@ -69,6 +79,7 @@ const HospitalDetails = ({ selectedHospital }) => {
         doctor_email: selectedDoctor.gmail,
         appointment_type: appointmentType,
         time_slot: selectedTimeSlot,
+        appointment_date: selectedDate,
         created_at: new Date().toISOString(),
         status: "scheduled",
       };
@@ -101,7 +112,7 @@ const HospitalDetails = ({ selectedHospital }) => {
           <div className="mb-8 md:mb-10">
             <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-4">Select Department</h3>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              {selectedHospital.departments?.map((department) => (
+              {selectedHospital?.departments?.map((department) => (
                 <button
                   key={department.name}
                   onClick={() => handleDepartmentSelect(department)}
@@ -146,51 +157,78 @@ const HospitalDetails = ({ selectedHospital }) => {
             </div>
           )}
 
-          {/* Time Slots */}
+          {/* Dates */}
           {selectedDoctor && (
+            <div className="mb-8 md:mb-10">
+              <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-4">Select Date</h3>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                {[...selectedDoctor.availability.offline, ...selectedDoctor.availability.online]
+                  .map(slot => slot.date)
+                  .filter((date, index, self) => self.indexOf(date) === index)
+                  .map((date) => (
+                    <button
+                      key={date}
+                      onClick={() => handleDateSelect(date)}
+                      className={`px-4 py-2 rounded-lg shadow-sm transition-all ${
+                        selectedDate === date ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-blue-100"
+                      }`}
+                    >
+                      {date}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Time Slots */}
+          {selectedDate && selectedDoctor && (
             <div className="mb-8 md:mb-10">
               <h3 className="text-lg md:text-xl font-semibold text-gray-700 mb-4">Select Time Slot</h3>
               <div className="mb-6">
                 <h4 className="font-medium text-gray-800 mb-2">Offline Appointments</h4>
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                  {selectedDoctor.availability.offline.map((slot, idx) => (
-                    <button
-                      key={`offline-${idx}`}
-                      onClick={() => handleTimeSlotSelect(slot, "offline")}
-                      className={`px-3 py-2 md:px-4 md:py-2 rounded-lg shadow-sm transition-all ${
-                        selectedTimeSlot === slot && appointmentType === "offline"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-200 hover:bg-blue-100"
-                      }`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
+                  {selectedDoctor.availability.offline
+                    .filter(slot => slot.date === selectedDate)
+                    .map((slot, idx) => (
+                      <button
+                        key={`offline-${idx}`}
+                        onClick={() => handleTimeSlotSelect(slot.time, "offline")}
+                        className={`px-3 py-2 rounded-lg shadow-sm transition-all ${
+                          selectedTimeSlot === slot.time && appointmentType === "offline"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 hover:bg-blue-100"
+                        }`}
+                      >
+                        {slot.time}
+                      </button>
+                    ))}
                 </div>
               </div>
               <div>
                 <h4 className="font-medium text-gray-800 mb-2">Online Appointments</h4>
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                  {selectedDoctor.availability.online.map((slot, idx) => (
-                    <button
-                      key={`online-${idx}`}
-                      onClick={() => handleTimeSlotSelect(slot, "online")}
-                      className={`px-3 py-2 md:px-4 md:py-2 rounded-lg shadow-sm transition-all ${
-                        selectedTimeSlot === slot && appointmentType === "online"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-200 hover:bg-blue-100"
-                      }`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
+                  {selectedDoctor.availability.online
+                    .filter(slot => slot.date === selectedDate)
+                    .map((slot, idx) => (
+                      <button
+                        key={`online-${idx}`}
+                        onClick={() => handleTimeSlotSelect(slot.time, "online")}
+                        className={`px-3 py-2 rounded-lg shadow-sm transition-all ${
+                          selectedTimeSlot === slot.time && appointmentType === "online"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-200 hover:bg-blue-100"
+                        }`}
+                      >
+                        {slot.time}
+                      </button>
+                    ))}
                 </div>
               </div>
             </div>
           )}
 
           {/* Book Appointment */}
-          {selectedDoctor && selectedTimeSlot && (
+          {selectedDate && selectedTimeSlot && (
             <div className="mt-6 md:mt-8 text-center md:text-left">
               <button
                 onClick={handleBookAppointment}
