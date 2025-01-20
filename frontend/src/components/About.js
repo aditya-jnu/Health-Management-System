@@ -50,10 +50,61 @@ const About = () => {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
-      {/* Left Side: About Section */}
-      <div className="flex-1 bg-blue-200 p-8 md:p-16">
-        <h2 className="text-3xl font-semibold">About Us</h2>
-        <p className="mt-4">Welcome to our Healthcare Portal. Log in to manage your health records easily.</p>
+      {/* Left Side: Services Section */}
+      <div className="flex-1 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 p-8 md:p-16">
+        <img src='/assets/medilogi1.png'></img>
+        <h2 className="text-4xl font-bold text-center text-white mb-6">What Services We Provide</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          {/* Service Item 1 */}
+          <div className="flex items-center space-x-4 bg-white p-4 rounded-md shadow-md">
+            <img
+              src="/assets/service-icon1.jpg"
+              alt="Personalized Health Records"
+              className="h-12 w-12"
+            />
+            <p className="text-lg font-medium">Personalized Health Records</p>
+          </div>
+
+          {/* Service Item 2 */}
+          <div className="flex items-center space-x-4 bg-white p-4 rounded-md shadow-md">
+            <img
+              src="/assets/service-icon22.png"
+              alt="Appointment Scheduling"
+              className="h-12 w-12"
+            />
+            <p className="text-lg font-medium">Appointment Scheduling</p>
+          </div>
+
+          {/* Service Item 3 */}
+          <div className="flex items-center space-x-4 bg-white p-4 rounded-md shadow-md">
+            <img
+              src="/assets/service-icon3.jpg"
+              alt="Real-Time Health Monitoring"
+              className="h-12 w-12"
+            />
+            <p className="text-lg font-medium">Real-Time Health Monitoring</p>
+          </div>
+
+          {/* Service Item 4 */}
+          <div className="flex items-center space-x-4 bg-white p-4 rounded-md shadow-md">
+            <img
+              src="/assets/service-icon4.png"
+              alt="24/7 Consultation Services"
+              className="h-12 w-12"
+            />
+            <p className="text-lg font-medium">24/7 Consultation Services</p>
+          </div>
+
+          {/* Service Item 5 */}
+          {/* <div className="flex items-center space-x-4 bg-white p-4 rounded-md shadow-md">
+            <img
+              src="/assets/service-icon5.png"
+              alt="Health Insights & Analytics"
+              className="h-12 w-12"
+            />
+            <p className="text-lg font-medium">Health Insights & Analytics</p>
+          </div> */}
+        </div>
       </div>
 
       {/* Right Side: Login / Signup Form */}

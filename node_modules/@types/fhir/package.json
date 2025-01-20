@@ -1,0 +1,22 @@
+{
+    "name": "@types/fhir",
+    "version": "0.0.30",
+    "description": "TypeScript definitions for FHIR Release 3 (STU)",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "Artifact Health",
+            "url": "https://www.artifacthealth.com"
+        }
+    ],
+    "main": "",
+    "repository": {
+        "type": "git",
+        "url": "https://www.github.com/DefinitelyTyped/DefinitelyTyped.git"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "peerDependencies": {},
+    "typesPublisherContentHash": "96018ff477d9e3e316b09be6c1a44aa0dde93ea98cedd93932fa4b96c93658e9",
+    "typeScriptVersion": "2.0"
+}
