@@ -4,8 +4,10 @@ import Card from "./UI/Card";
 import Modal from "./UI/Modal";
 import { motion } from "framer-motion";
 import { Calendar, Clock, MapPin, User, Hospital, Activity, Calendar as CalendarIcon } from "lucide-react";
+import {useNavigate} from 'react-router-dom'
 
 const MyAppointment = () => {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,6 +51,12 @@ const MyAppointment = () => {
       setLoading(false);
     }
   };
+
+  const handleVideoCall = (appointment)=>{
+    const uniqueCode = Math.random().toString(36).substr(2, 9);
+    console.log(appointment)
+    navigate(`/room/${uniqueCode}`, { state: { appointment } });
+  }
 
   const handlePreAppointment = (doctor) => {
     setCurrentDoctor(doctor);
@@ -226,7 +234,17 @@ const MyAppointment = () => {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handlePreAppointment(appointment)}
+                      onClick={() => handleVideoCall(appointment)}
+                      className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-green-600 to-green-900 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                    >
+                      <Calendar className="h-5 w-5 mr-2" />
+                      Schedule a Video Call
+                    </motion.button>
+
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleVideoCall(appointment)}
                       className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                     >
                       <Activity className="h-5 w-5 mr-2" />

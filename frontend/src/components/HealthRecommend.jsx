@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AlertTriangle, Heart, Activity, BookOpen, CheckCircle } from 'lucide-react';
 
 export default function HealthRecommend() {
   const [formData, setFormData] = useState({
@@ -78,7 +79,7 @@ export default function HealthRecommend() {
           headers: {
             'Content-Type': 'application/json',
             'x-rapidapi-host': 'ai-medical-diagnosis-api-symptoms-to-results.p.rapidapi.com',
-            'x-rapidapi-key': '08c323195amsh8ee6fef95d50231p146c4bjsn5bc8c7d9ae2b',
+            'x-rapidapi-key': '5b8827fa98msh0c39c2348ce50a1p1a0ee3jsnf8c822c36be3',
           },
           body: JSON.stringify(requestBody),
         }
@@ -244,10 +245,99 @@ export default function HealthRecommend() {
 
         {/* Display health recommendations in JSON format */}
         {healthRecommendations && !loading && (
-          <div className="mt-8 p-4 bg-gray-200 rounded-lg">
-            <h3 className="font-semibold mb-2">Health Recommendations (JSON):</h3>
-            <pre>{JSON.stringify(healthRecommendations, null, 2)}</pre>
-          </div>
+              <div className="mt-12 space-y-8 animate-fadeIn">
+                {/* Health Assessment Overview */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Health Assessment</h3>
+                  <p className="text-gray-600 mb-4">{healthRecommendations.healthAssessment.overview}</p>
+                  
+                  {/* Key Areas */}
+                  <div className="space-y-2">
+                    <h4 className="text-lg font-semibold text-gray-800">Key Areas</h4>
+                    <ul className="space-y-1">
+                      {healthRecommendations.healthAssessment.keyAreas.map((area, index) => (
+                        <li key={index} className="flex items-center space-x-2 text-gray-600">
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <span>{area}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+          
+                  {/* Risk Factors */}
+                  <div className="mt-4 space-y-2">
+                    <h4 className="text-lg font-semibold text-gray-800">Risk Factors</h4>
+                    <ul className="space-y-1">
+                      {healthRecommendations.healthAssessment.riskFactors.map((factor, index) => (
+                        <li key={index} className="flex items-center space-x-2 text-red-600">
+                          <AlertTriangle className="w-4 h-4" />
+                          <span>{factor}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+          
+                {/* Recommendations */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center space-x-2">
+                    <Heart className="w-6 h-6 text-rose-600" />
+                    <span>Recommendations</span>
+                  </h3>
+          
+                  {/* Lifestyle Recommendations */}
+                  <div className="space-y-6">
+                    {Object.entries(healthRecommendations.recommendations.lifestyle).map(([key, value]) => (
+                      <div key={key} className="space-y-4">
+                        <h4 className="text-lg font-semibold text-gray-800 capitalize">{key}</h4>
+                        <ul className="space-y-1">
+                          {value.map((item, index) => (
+                            <li key={index} className="flex space-x-2 text-gray-600 items-start">
+                              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+          
+                {/* Preventive Care */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center space-x-2">
+                    <Activity className="w-6 h-6 text-green-500" />
+                    <span>Preventive Care</span>
+                  </h3>
+          
+                  {Object.entries(healthRecommendations.recommendations.preventiveCare).map(([section, items]) => (
+                    <div key={section} className="space-y-4">
+                      <h4 className="text-lg font-semibold text-gray-800 capitalize">{section}</h4>
+                      <ul className="space-y-1">
+                        {items.map((item, index) => (
+                          <li key={index} className="flex items-start space-x-2 text-gray-600">
+                            <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+          
+                {/* Animations and Styling */}
+                <style jsx>{`
+                  @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                  }
+          
+                  .animate-fadeIn {
+                    animation: fadeIn 0.5s ease-out;
+                  }
+                `}</style>
+              </div>
+          
         )}
       </div>
     </div>
