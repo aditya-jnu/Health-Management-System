@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Video from 'twilio-video';
 
 const Chat = () => {
     const {code} = useParams()
+    const location = useLocation();
+    const appointment = location.state?.appointment || {};
     const [room, setRoom] = useState(null);
     const [token, setToken] = useState(null);
     const [localTracks, setLocalTracks] = useState([]);
     const [remoteParticipants, setRemoteParticipants] = useState([]);
     const [isConnected, setIsConnected] = useState(false);
+    const [timeLeft, setTimeLeft] = useState("");
 
     useEffect(()=>{
         console.log("roomcode ",code)
@@ -16,6 +19,28 @@ const Chat = () => {
     },[code])
     const identity = `user-${Math.random().toString(36).substr(2, 9)}`;
     const baseUrl = "http://localhost:4000";
+
+    // Calculate remaining time until the appointment
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const appointmentDateTime = new Date(`${appointment.appointment_date} ${appointment.time_slot.split(" - ")[0]}`);
+      const diff = appointmentDateTime - now;
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        setTimeLeft(`${days} days, ${hours} hours, and ${minutes} minutes left`);
+      } else {
+        setTimeLeft("The appointment time has passed.");
+      }
+    };
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, [appointment]);
 
     const joinRoom = async () => {
         try {
@@ -116,36 +141,13 @@ const Chat = () => {
 
     return (
         <div className='bg-black min-h-screen w-screen p-5'>
-            <p className='text-white font-bold text-3xl text-center mb-5'>Room Code is <span className='italic font-normal font-serif'>{code}</span></p>
-            <div>
-                <div id="remote-video-container" className='border w-[320px] m-1'>
-                    {remoteParticipants.map(({ track }, index) =>
-                        track.kind === 'video' ? (
-                        <video key={index}
-                            ref={(video) => {
-                                if (video) {
-                                    video.srcObject = new MediaStream([track.mediaStreamTrack]);
-                                    video.play();
-                                }
-                            }}
-                            width="320"
-                            height="240"
-                        />
-                        ) : 
-                        track.kind === 'audio' ? (
-                        <audio key={index}
-                            ref={(audio) => {
-                                if (audio) {
-                                    audio.srcObject = new MediaStream([track.mediaStreamTrack]);
-                                    audio.play();
-                                }
-                            }}
-                        />
-                        ) : null
-                    )}
-                </div>
-
-                <div className='w-[330px] border p-1'>
+            {/* <p className='text-white font-bold text-3xl text-center mb-5'>Room Code is <span className='italic font-normal font-serif'>{code}</span></p> */}
+            <p className="text-white text-4xl text-center mb-5 font-bold">{timeLeft}</p>
+            <p className="text-white text-2xl text-center mb-5">
+                Appointment with <strong>{appointment.doctor_name}</strong> at <strong>{appointment.hospital_name}</strong>
+            </p>
+            <div className='flex justify-center gap-5'>
+            <div className='w-[330px] border p-1'>
                     <div id="local-video-container" className='w-[320px] mb-1'>
                         {localTracks.map((track, index) =>
                         track.kind === 'video' ? (
@@ -173,6 +175,33 @@ const Chat = () => {
                         Leave Room
                     </button>):null}
                     </div>
+                </div>
+                
+                <div id="remote-video-container" className='border w-[320px] m-1'>
+                    {remoteParticipants.map(({ track }, index) =>
+                        track.kind === 'video' ? (
+                        <video key={index}
+                            ref={(video) => {
+                                if (video) {
+                                    video.srcObject = new MediaStream([track.mediaStreamTrack]);
+                                    video.play();
+                                }
+                            }}
+                            width="320"
+                            height="240"
+                        />
+                        ) : 
+                        track.kind === 'audio' ? (
+                        <audio key={index}
+                            ref={(audio) => {
+                                if (audio) {
+                                    audio.srcObject = new MediaStream([track.mediaStreamTrack]);
+                                    audio.play();
+                                }
+                            }}
+                        />
+                        ) : null
+                    )}
                 </div>
             </div>
         </div>
