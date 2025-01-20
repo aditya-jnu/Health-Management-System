@@ -10,7 +10,7 @@ import Layout from './Layout';
 import Contact from './components/Contact/Contact';
 import Chat from './components/Chat';
 import HealthRecommend from './components/HealthRecommend';
-import MedicalDiagnosisForm from './components/MediacalDiagnosis';
+import MedicalDiagnosisForm from './components/MedicalDiagnosis/MediacalDiagnosis';
 function App() {
   return (
     <Router>
