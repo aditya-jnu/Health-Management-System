@@ -52,7 +52,7 @@ const About = () => {
     <div className="flex flex-col lg:flex-row bg-gray-50">
       {/* Left Side: Services Section */}
       <div className="flex-1 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 p-8 md:p-16">
-        <img src='/assets/medilogi1.png' alt='image'/>
+        <img src='/assets/medilogi1.png' alt='logo'/>
         <h2 className="text-4xl font-bold text-center text-white mb-6">What Services We Provide</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {/* Service Item 1 */}
