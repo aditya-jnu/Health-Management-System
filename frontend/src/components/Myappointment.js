@@ -58,10 +58,10 @@ const MyAppointment = () => {
     navigate(`/room/${uniqueCode}`, { state: { appointment } });
   }
 
-  // const handlePreAppointment = (doctor) => {
-  //   setCurrentDoctor(doctor);
-  //   setShowForm(true);
-  // };
+  const handlePreAppointment = (doctor) => {
+    setCurrentDoctor(doctor);
+    setShowForm(true);
+  };
 
   const handleFormChange = (e) => {
     setFormData({
@@ -244,7 +244,7 @@ const MyAppointment = () => {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleVideoCall(appointment)}
+                      onClick={() => handlePreAppointment(appointment)}
                       className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                     >
                       <Activity className="h-5 w-5 mr-2" />

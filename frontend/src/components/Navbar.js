@@ -30,6 +30,7 @@ const Navbar = () => {
     navigate("/dashboard");
     setDropdownOpen(false);
     setMenuOpen(false);
+    setUser(user)
   };
 
   const handleLogout = async () => {

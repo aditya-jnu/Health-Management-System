@@ -5,7 +5,7 @@ import Video from 'twilio-video';
 const Chat = () => {
     const {code} = useParams()
     const location = useLocation();
-    const appointment = location.state?.appointment || {};
+    const appointment = (location.state && location.state.appointment) || {};
     const [room, setRoom] = useState(null);
     const [token, setToken] = useState(null);
     const [localTracks, setLocalTracks] = useState([]);
@@ -111,7 +111,7 @@ const Chat = () => {
         if (token && !isConnected) {
             joinRoom();
         }
-    }, [token]);
+    }, [token,isConnected,joinRoom]);
 
     const handleParticipantConnected = (participant) => {
         console.log(`Participant connected: ${participant.identity}`);
