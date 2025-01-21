@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, Heart, Activity, BookOpen, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Heart, Activity, CheckCircle } from 'lucide-react';
 
 export default function HealthRecommend() {
   const [formData, setFormData] = useState({

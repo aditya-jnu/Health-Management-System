@@ -5,7 +5,7 @@ const uploadProfilePicture = async (file, userId) => {
   const fileName = `${userId}-profile-${file.name}`;
   const filePath = `profile-pictures/${fileName}`;
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
       .from('avatars') // 'avatars' is the name of the bucket; replace with your bucket name
       .upload(filePath, file);
 
@@ -29,7 +29,7 @@ const uploadReportFile = async (file, userId) => {
   const fileName = `${userId}-report-${file.name}`;
   const filePath = `report-files/${fileName}`;
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
       .from('reports')
       .upload(filePath, file);
 
@@ -117,6 +117,7 @@ const Dashboard = () => {
         if (file) {
             setProfilePicFile(file);
             try {
+                console.log(profilePicFile, uploadStatus)
                 const { data: { session } } = await supabase.auth.getSession();
                 if (!session?.user) {
                     throw new Error('No authenticated user found');

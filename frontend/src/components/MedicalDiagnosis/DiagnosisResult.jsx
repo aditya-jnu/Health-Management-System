@@ -6,7 +6,6 @@ import {
   Clock, 
   BookOpen, 
   Link as LinkIcon,
-  ChevronDown,
   AlertCircle,
   BookMarked,
   Brain

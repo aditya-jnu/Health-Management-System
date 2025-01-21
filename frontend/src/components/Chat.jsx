@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import Video from 'twilio-video';
 
@@ -21,26 +21,39 @@ const Chat = () => {
     const baseUrl = "http://localhost:4000";
 
     // Calculate remaining time until the appointment
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date();
-      const appointmentDateTime = new Date(`${appointment.appointment_date} ${appointment.time_slot.split(" - ")[0]}`);
-      const diff = appointmentDateTime - now;
-
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        setTimeLeft(`${days} days, ${hours} hours, and ${minutes} minutes left`);
-      } else {
-        setTimeLeft("The appointment time has passed.");
-      }
-    };
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 60000); // Update every minute
-
-    return () => clearInterval(timer);
-  }, [appointment]);
+    // Memoize the appointmentDateTime
+    const appointmentDateTime = useMemo(() => {
+        if (appointment) {
+            return new Date(`${appointment.appointment_date} ${appointment.time_slot.split(" - ")[0]}`);
+        }
+        return null;
+    }, [appointment]);
+  
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const now = new Date();
+            if (appointmentDateTime) {
+                const diff = appointmentDateTime - now;
+  
+                if (diff > 0) {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                    setTimeLeft(`${days} days, ${hours} hours, and ${minutes} minutes left`);
+                } else {
+                        setTimeLeft("The appointment time has passed.");
+                    }
+             }
+        };
+    
+        // Calculate time left initially and set interval
+        calculateTimeLeft();
+        const timer = setInterval(calculateTimeLeft, 60000); // Update every minute
+  
+        // Cleanup the interval on component unmount
+        return () => clearInterval(timer);
+    }, [appointmentDateTime]);
+  
 
     const joinRoom = async () => {
         try {
@@ -96,8 +109,6 @@ const Chat = () => {
 
     useEffect(() => {
         if (token && !isConnected) {
-            
-
             joinRoom();
         }
     }, [token]);

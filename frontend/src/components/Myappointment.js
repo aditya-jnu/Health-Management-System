@@ -58,10 +58,10 @@ const MyAppointment = () => {
     navigate(`/room/${uniqueCode}`, { state: { appointment } });
   }
 
-  const handlePreAppointment = (doctor) => {
-    setCurrentDoctor(doctor);
-    setShowForm(true);
-  };
+  // const handlePreAppointment = (doctor) => {
+  //   setCurrentDoctor(doctor);
+  //   setShowForm(true);
+  // };
 
   const handleFormChange = (e) => {
     setFormData({
