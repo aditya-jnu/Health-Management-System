@@ -49,7 +49,7 @@ const About = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-gray-50">
+    <div className="flex flex-col lg:flex-row bg-gray-50">
       {/* Left Side: Services Section */}
       <div className="flex-1 bg-gradient-to-r from-blue-200 via-blue-300 to-blue-400 p-8 md:p-16">
         <img src='/assets/medilogi1.png'></img>
