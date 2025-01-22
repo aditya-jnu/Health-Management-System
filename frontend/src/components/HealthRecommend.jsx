@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, Heart, Activity, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Heart, Activity, CheckCircle , UserCircle2, Clipboard, Settings} from 'lucide-react';
 
 export default function HealthRecommend() {
   const [formData, setFormData] = useState({
@@ -22,7 +22,15 @@ export default function HealthRecommend() {
 
   const [healthRecommendations, setHealthRecommendations] = useState(null); // Store recommendations data
   const [loading, setLoading] = useState(false); // State to manage loading
-
+  const [activeStep, setActiveStep] = useState(0);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  
+  const formSteps = [
+    { title: 'Personal Info', icon: UserCircle2 },
+    { title: 'Health Data', icon: Clipboard },
+    { title: 'Lifestyle', icon: Activity },
+    { title: 'Review', icon: Settings }
+  ];
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -30,10 +38,17 @@ export default function HealthRecommend() {
       [name]: type === 'checkbox' ? checked : value,
     });
   };
-
+  
+  const nextStep = () => {
+    setActiveStep(prev => Math.min(prev + 1, formSteps.length - 1));
+  };
+  
+  const prevStep = () => {
+    setActiveStep(prev => Math.max(prev - 1, 0));
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setFormSubmitted(true);
     setLoading(true); // Set loading to true when the request starts
 
     const healthProfile = {
@@ -107,113 +122,148 @@ export default function HealthRecommend() {
   }, [formData.weight, formData.height]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Health Recommendations Form</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-           {/* part 1 till activity level */}
-           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <input placeholder='enter your age' type="number" name="age" value={formData.age}
-                onChange={handleChange} className="w-full mt-1 p-2 border rounded-lg" required
-              />
-            </div>
-            <div>
-              <select name="gender" value={formData.gender} onChange={handleChange} 
-              className="w-full mt-1 p-2 border rounded-lg cursor-pointer">
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </select>
-            </div>
-            <div>
-              <input placeholder='enter your weight(Kg)' type="number" name="weight" value={formData.weight}
-                onChange={handleChange} className="w-full mt-1 p-2 border rounded-lg" required
-              />
-            </div>
-            <div>
-              <input placeholder='enter your height(Cm)' type="number" name="height" value={formData.height}
-                onChange={handleChange} className="w-full mt-1 p-2 border rounded-md" required
-              />
-            </div>
-            <div>
-                <label className="block text-gray-600 font-medium">BMI</label>
-                <input type="number" name="bmi" value={formData.bmi} onChange={handleChange}
-                className="w-full mt-1 p-2 border rounded-lg cursor-pointer" required
-                />
-            </div>
-            <div>
-                <label className="block text-gray-600 font-medium">Activity Level</label>
-                <select name="activityLevel" value={formData.activityLevel} onChange={handleChange}
-                className="w-full mt-1 p-2 border rounded-lg cursor-pointer"
-                >
-                    <option value="sedentary">Sedentary</option>
-                    <option value="lightly active">Lightly Active</option>
-                    <option value="moderately active">Moderately Active</option>
-                    <option value="very active">Very Active</option>
-                </select>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Health Recommendations
+              </span>
+            </h2>
+            <p className="text-gray-600">Get personalized health insights and recommendations</p>
           </div>
 
-          {/* part 2 till medical condition */}
-          <div>
+          {/* Progress Steps */}
+          <div className="flex justify-between mb-12">
+            {formSteps.map((step, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center w-1/4 cursor-pointer transition-all duration-300"
+                onClick={() => !formSubmitted && setActiveStep(index)}
+              >
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500 transform
+                    ${index === activeStep ? 'bg-blue-600 text-white scale-110' : 
+                      index < activeStep ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}
+                >
+                  <step.icon className="w-6 h-6" />
+                </div>
+                <span className={`text-sm font-medium transition-colors duration-300
+                  ${index === activeStep ? 'text-blue-600' : 'text-gray-600'}`}>
+                  {step.title}
+                </span>
+                <div className={`h-1 w-full mt-2 transition-all duration-300
+                  ${index === activeStep ? 'bg-blue-600' : 
+                    index < activeStep ? 'bg-green-500' : 'bg-gray-200'}`} />
+              </div>
+            ))}
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Personal Info Step */}
+            <div className={`transition-all duration-500 transform 
+              ${activeStep === 0 ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 hidden'}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Age</label>
+                  <input
+                    type="number"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Gender</label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  >
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Health Data Step */}
+            <div className={`transition-all duration-500 transform 
+              ${activeStep === 1 ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 hidden'}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Weight (kg)</label>
+                  <input
+                    type="number"
+                    name="weight"
+                    value={formData.weight}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Height (cm)</label>
+                  <input
+                    type="number"
+                    name="height"
+                    value={formData.height}
+                    onChange={handleChange}
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    required
+                  />
+                </div>
+                <div>
             <label className="block text-gray-600 font-medium">Medical Conditions (comma-separated)</label>
             <input type="text" name="medicalConditions" value={formData.medicalConditions}
               onChange={handleChange} className="w-full mt-1 p-2 border rounded-lg"
             />
           </div>
+              </div>
+            </div>
 
-          {/* part 3 of lifestyle */}
-          <fieldset className="border p-4 rounded-lg">
-            <legend className="text-lg font-semibold ">Lifestyle Information</legend>
-            <div className="flex flex-col gap-4">
-                <div className="flex items-center">
-                    <label htmlFor="smoking" className="text-gray-600 font-medium mr-2 cursor-pointer">Smoking</label>
-                    <input id='smoking' type="checkbox" name="smoking" checked={formData.smoking}
-                    onChange={handleChange} className="h-5 w-5"
+            {/* Lifestyle Step */}
+            <div className={`transition-all duration-500 transform 
+              ${activeStep === 2 ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 hidden'}`}>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Activity Level</label>
+                    <select
+                      name="activityLevel"
+                      value={formData.activityLevel}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    >
+                      <option value="sedentary">Sedentary</option>
+                      <option value="lightly active">Lightly Active</option>
+                      <option value="moderately active">Moderately Active</option>
+                      <option value="very active">Very Active</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Sleep Hours</label>
+                    <input
+                      type="number"
+                      name="sleepHours"
+                      value={formData.sleepHours}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      required
                     />
-                </div>
-                {/* legend */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                <div>
-                    <label className="block text-gray-600 font-medium">Alcohol</label>
-                    <select name="alcohol" value={formData.alcohol} onChange={handleChange}
-                    className="w-full mt-1 p-2 border rounded-lg cursor-pointer"
-                    >
-                        <option value="none">None</option>
-                        <option value="occasional">Occasional</option>
-                        <option value="frequent">Frequent</option>
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-gray-600 font-medium">Diet</label>
-                    <select name="diet" value={formData.diet} onChange={handleChange}
-                    className="w-full mt-1 p-2 border rounded-lg cursor-pointer"
-                    >
-                        <option value="mixed">Mixed</option>
-                        <option value="vegetarian">Vegetarian</option>
-                        <option value="vegan">Vegan</option>
-                    </select>
-                </div>
-                {/* Sleep Hours */}
-                <div>
+                  </div>
+                  <div>
                     <label className="block text-gray-600 font-medium">Sleep Hours</label>
                     <input type="number" name="sleepHours" value={formData.sleepHours} onChange={handleChange}
                     className="w-full mt-1 p-2 border rounded-lg" required
                     />
                 </div>
-                {/* Stress Level */}
-                <div>
-                    <label className="block text-gray-600 font-medium">Stress Level</label>
-                    <select name="stressLevel" value={formData.stressLevel} onChange={handleChange}
-                    className="w-full mt-1 p-2 border rounded-md"
-                    >
-                     <option value="low">Low</option>
-                     <option value="moderate">Moderate</option>
-                     <option value="high">High</option>
-                    </select>
-                </div>
-                </div>
-                {/* Exercise Frequency */}
                 <div>
                     <label className="block text-gray-600 font-medium">Exercise Frequency</label>
                     <select name="exerciseFrequency" value={formData.exerciseFrequency} onChange={handleChange}
@@ -225,16 +275,87 @@ export default function HealthRecommend() {
                         <option value="daily">Daily</option>
                     </select>
                 </div>
+                </div>
+              </div>
             </div>
-          </fieldset>   
-          
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-          >
-            Get Recommendations
-          </button>
-        </form>
+
+            {/* Review Step */}
+            <div className={`transition-all duration-500 transform 
+              ${activeStep === 3 ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 hidden'}`}>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900">Review Your Information</h3>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Age</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.age}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Gender</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.gender}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">BMI</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.bmi}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Activity Level</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.activityLevel}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Sleep Hours</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.sleepHours}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Exercise Frequency</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.exerciseFrequency}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Stress Level</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.stressLevel}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">Medical Conditions</dt>
+                      <dd className="mt-1 text-sm text-gray-900">{formData.medicalConditions}</dd>
+                    </div>
+
+                    
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between mt-8">
+              <button
+                type="button"
+                onClick={prevStep}
+                className={`px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-all duration-300
+                  ${activeStep === 0 ? 'opacity-0 cursor-not-allowed' : 'opacity-100'}`}
+                disabled={activeStep === 0}
+              >
+                Previous
+              </button>
+              {activeStep === formSteps.length - 1 ? (
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                  disabled={loading}
+                >
+                  {loading ? 'Processing...' : 'Get Recommendations'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={nextStep}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+                >
+                  Next
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
 
         {/* Show loading indicator when data is being fetched */}
         {loading && (
