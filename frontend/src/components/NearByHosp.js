@@ -17,7 +17,7 @@ export default function NearByHosp() {
     location: `${loc.latitude},${loc.longitude}`,
     radius: 5000,
     name: "hospital",
-    key: "AlzaSy1MLzhGZDb9umqvm7c5XTNFSjDcHTVDKNz",
+    key: "AlzaSyyhcZmisIhkme121qXrEUaSpEsfpWuIcvl",
   };
 
   async function fetchHosp() {
@@ -31,7 +31,7 @@ export default function NearByHosp() {
       const combinedHospitals = [...testData, ...apiHospitals];
       setHospitals(combinedHospitals);
     } catch (err) {
-      setError("Failed to fetch hospitals. Please try again.");
+      // setError("Failed to fetch hospitals. Please try again.");
       setHospitals(testData);
     } finally {
       setLoading(false);
@@ -139,20 +139,23 @@ export default function NearByHosp() {
 
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-2 h-2 rounded-full ${
-                      hospital.opening_hours?.open_now
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    }`}
+                    // className={`w-2 h-2 rounded-full ${
+                    //   hospital.opening_hours?.open_now
+                    //     ? "bg-green-500"
+                    //     : "bg-red-500"
+                    // }`}
+                    className="bg-green-500"
                   />
                   <span
-                    className={`${
-                      hospital.opening_hours?.open_now
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
+                    // className={`${
+                    //   hospital.opening_hours?.open_now
+                    //     ? "text-green-600"
+                    //     : "text-red-600"
+                    // }`}
+                    className="text-green-600"
                   >
-                    {hospital.opening_hours?.open_now ? "Open now" : "Closed"}
+                    {/* {hospital.opening_hours?.open_now ? "Open now" : "Closed"} */}
+                    Open now
                   </span>
                 </div>
               </div>

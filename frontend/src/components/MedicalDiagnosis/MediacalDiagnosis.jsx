@@ -87,10 +87,9 @@ const MedicalDiagnosisForm = () => {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "x-rapidapi-key":
-            "d70556d7cbmsh2b8642b7ec2bf60p1606ecjsn28684336dff1",
-          "x-rapidapi-host":
-            "ai-medical-diagnosis-api-symptoms-to-results.p.rapidapi.com",
+          'x-rapidapi-key': '356f91d6cdmsh5903b45f861ec51p178dfcjsn3228785bad00',
+		      'x-rapidapi-host': 'ai-medical-diagnosis-api-symptoms-to-results.p.rapidapi.com',
+
         },
       });
 
@@ -147,8 +146,8 @@ const MedicalDiagnosisForm = () => {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-         'x-rapidapi-key': 'd70556d7cbmsh2b8642b7ec2bf60p1606ecjsn28684336dff1',
-          'x-rapidapi-host': 'ai-medical-diagnosis-api-symptoms-to-results.p.rapidapi.com',
+        'x-rapidapi-key': '356f91d6cdmsh5903b45f861ec51p178dfcjsn3228785bad00',
+		    'x-rapidapi-host': 'ai-medical-diagnosis-api-symptoms-to-results.p.rapidapi.com',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
