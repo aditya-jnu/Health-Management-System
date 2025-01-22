@@ -31,7 +31,7 @@ function Geolocation() {
 
   useEffect(() => {
     getLocation();
-  }, [getLocation]);
+  }, []);
   console.log(loc);
 
   return null;

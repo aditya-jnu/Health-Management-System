@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import Video from 'twilio-video';
+import { useCallback } from 'react';
 
 const Chat = () => {
     const {code} = useParams()
@@ -17,8 +18,8 @@ const Chat = () => {
         console.log("roomcode ",code)
         setRoom(code)
     },[code])
-    const identity = `user-${Math.random().toString(36).substr(2, 9)}`;
-    const baseUrl = "http://localhost:4000";
+    const [identity] = useState(`user-${Math.random().toString(36).substr(2, 9)}`);
+    const baseUrl = "https://health-management-system-ofyt.onrender.com";
 
     // Calculate remaining time until the appointment
     // Memoize the appointmentDateTime
@@ -54,8 +55,7 @@ const Chat = () => {
         return () => clearInterval(timer);
     }, [appointmentDateTime]);
   
-
-    const joinRoom = async () => {
+    const joinRoom = useCallback(async () => {
         try {
             const localVideoTrack = await Video.createLocalVideoTrack();
             const localAudioTrack = await Video.createLocalAudioTrack();
@@ -87,7 +87,7 @@ const Chat = () => {
         } catch (error) {
             console.error('Error connecting to room:', error);
         }
-    };
+    }, [token, room]);
 
     const fetchToken = async () => {
         console.log("Fetching token......")
